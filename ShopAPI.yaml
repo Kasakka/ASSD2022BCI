@@ -1,0 +1,399 @@
+openapi: 3.1.0
+info:
+  title: ShopAPI
+  version: '1.0'
+  contact: {}
+  summary: ShopAPI
+  description: Simple API for a webshop.
+servers:
+  - url: 'localhost:3000'
+    description: Henri Matero
+paths:
+  /login:
+    post:
+      summary: Log In
+      tags: []
+      operationId: post-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+              examples: {}
+        '401':
+          description: Unauthorized
+      description: Login.
+  /users:
+    post:
+      summary: Create a New User
+      tags: []
+      operationId: post-user
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad Request
+        '409':
+          description: Conflict
+      description: Create a new user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples: {}
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: User info without the user ID.
+    parameters: []
+  '/users/{userId}':
+    parameters:
+      - schema:
+          type: string
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User Info by User ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples: {}
+        '404':
+          description: Not Found
+      operationId: get-users-userId
+      description: Get user info with matching ID.
+    put:
+      summary: Update User Info by User ID
+      tags: []
+      operationId: put-users-userId
+      responses:
+        '202':
+          description: Accepted
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      description: Update user info with matching ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: ''
+    delete:
+      summary: Delete User Info by User ID
+      tags: []
+      operationId: delete-users-userId
+      responses:
+        '202':
+          description: Accepted
+        '404':
+          description: Not Found
+      description: Delete user info with matching ID.
+  '/users/{userId}/items':
+    parameters:
+      - schema:
+          type: string
+          format: int64
+        name: userId
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      summary: Get User's Items
+      tags: []
+      description: Get items belonging to user ID.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+        '404':
+          description: Not Found
+      operationId: get-users-userId-items
+    put:
+      summary: ''
+      tags: []
+      description: Update items belonging to user ID.
+      operationId: put-users-userId-items
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: ''
+      tags: []
+      description: Delete items belonging to user ID.
+      operationId: delete-users-userId-items
+      responses:
+        '200':
+          description: OK
+  '/items/{itemId}':
+    parameters:
+      - schema:
+          type: number
+        name: itemId
+        in: path
+        required: true
+        description: Id of an existing item.
+    get:
+      summary: Get Item Info by Item ID
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Not Found
+      operationId: get-items-itemId
+      description: Get item info with matching ID.
+    put:
+      summary: Update Item Info by Item ID
+      tags: []
+      operationId: put-items-itemId
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      description: Update item info with matching ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Item'
+        description: ''
+    delete:
+      summary: Delete Item Info by Item ID
+      tags: []
+      operationId: delete-items-itemId
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      description: Delete item info with matching ID.
+  /items:
+    post:
+      summary: Create a New Item
+      tags: []
+      operationId: post-items
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: Bad Request
+      description: Create a new item.
+    parameters: []
+  /items/search:
+    get:
+      summary: Search Items
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+      operationId: get-items-search
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: category
+          description: Category of an item
+        - schema:
+            type: string
+          in: query
+          name: location
+          description: Location of an item
+        - schema:
+            type: string
+            format: date
+          in: query
+          name: postDate
+          description: Date of a posting
+        - schema:
+            type: string
+          in: query
+          name: query
+          description: Search string
+      description: 'Search items from the store. '
+    parameters: []
+components:
+  schemas:
+    User:
+      examples:
+        - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          firstName: string
+          lastName: string
+          dateOfBirth: '2022-02-23'
+          city: string
+          country: string
+          email: example@example.com
+          username: testname
+          password: pasSword
+      type: object
+      description: User information
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          description: First name of the user.
+        lastName:
+          type: string
+          description: Last name of the user.
+        dateOfBirth:
+          type: string
+          format: date
+          example: '2022-02-23'
+          description: Birthdate of the user in ISO8601 format.
+        city:
+          type: string
+          description: City of the user.
+        country:
+          type: string
+          description: Country of the user.
+        email:
+          type: string
+          description: E-mail address of the user.
+          format: email
+          example: example@example.com
+        username:
+          type: string
+          description: Username of the user.
+        password:
+          type: string
+          description: Password of the user.
+          format: password
+      required:
+        - firstName
+        - lastName
+        - dateOfBirth
+        - city
+        - country
+        - email
+        - username
+        - password
+    Item:
+      title: Item
+      type: object
+      description: Item information
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          description: Title of an item
+        description:
+          type: string
+          description: Description of an item
+        category:
+          type: string
+          description: Category of an item
+        images:
+          type: array
+          maxItems: 4
+          minItems: 0
+          description: Image URI array
+          items:
+            type: string
+            format: uri
+        askingPrice:
+          type: number
+          description: Asking price of the item
+        postDate:
+          type: string
+          format: date-time
+          description: Items date of posting
+        deliveryType:
+          description: Delivery type of the item
+          type: string
+        userId:
+          type: integer
+          format: int64
+          description: Seller Id of the item
+        city:
+          type: string
+          description: City location of the item
+        country:
+          type: string
+          description: Country location of the item
+      required:
+        - title
+        - description
+        - category
+        - images
+        - askingPrice
+        - postDate
+        - deliveryType
+        - userId
+        - city
+        - country
+      examples:
+        - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          title: Potato
+          description: This is a mighty potato
+          category: Food
+          images:
+            - 'http://potato.com'
+          askingPrice: 0
+          postDate: '2019-08-24T14:15:22Z'
+          deliveryType: Pidgeon Carrier
+          userId: 0
+          city: Tyrnävä
+          country: Finland
+    Items:
+      title: Items
+      type: array
+      items:
+        $ref: '#/components/schemas/Item'
+      description: Array of items
+      examples:
+        - - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+            title: Potato
+            description: This is a mighty potato
+            category: Food
+            images:
+              - 'http://potato.com'
+            askingPrice: 0
+            postDate: '2019-08-24T14:15:22Z'
+            deliveryType: Pidgeon Carrier
+            userId: 0
+            city: Tyrnävä
+            country: Finland
